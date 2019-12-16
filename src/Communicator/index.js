@@ -13,7 +13,7 @@ class Communicator extends EventEmitter {
 
   constructor(app, host, url) {
     super();
-    
+
     this.app = app;
 
     const uuid = this.generateUUID();
@@ -25,7 +25,7 @@ class Communicator extends EventEmitter {
       this.launcher = this.app.launcher;
       this.resource = `V2:${this.app.id}:WIN::${uuid}`;
     }
-    
+
     this.host = host || 'prod.ol.epicgames.com';
     this.url = url || 'xmpp-service-prod.ol.epicgames.com';
 
@@ -38,15 +38,15 @@ class Communicator extends EventEmitter {
   makeJID(...args) {
     return new JID(...args);
   }
-  
+
   makeInvitationFromStatus(status) { // Temporary solution, this method will be removed in future.
     const propertyKeys = Object.keys(status.properties);
     if (propertyKeys.length === 0) return null;
     const joinInfoKey = propertyKeys.find(key => /^party\.joininfodata\.([0-9]{0,})_j$/.test(key));
     const joinInfoData = status.properties[joinInfoKey];
-    
+
     if (joinInfoData.bIsPrivate) return null;
-    
+
     const now = new Date(Date.now());
     const expiresAt = new Date(Date.now());
     expiresAt.setHours(4);
@@ -78,7 +78,7 @@ class Communicator extends EventEmitter {
         wsURL: `wss://${this.url}`,
         transport: 'websocket',
         server: this.host,
-  
+
         credentials: {
           jid: `${this.launcher.account.id}@${this.host}`,
           host: this.host,
@@ -87,13 +87,13 @@ class Communicator extends EventEmitter {
         },
 
         resource: this.resource,
-        
+
       });
-  
+
       this.stream.enableKeepAlive({
         interval: 60,
       });
-      
+
       this.listenFriendsList();
       this.listenFriendStates();
       this.listenMessages();
@@ -101,7 +101,7 @@ class Communicator extends EventEmitter {
       this.stream.on('raw:incoming', (xml) => {
         this.emit('raw:incoming', xml);
       });
-  
+
       this.stream.on('raw:outgoing', (xml) => {
         this.emit('raw:outgoing', xml);
       });
@@ -110,7 +110,7 @@ class Communicator extends EventEmitter {
 
         this.emit('connected');
 
-        this.launcher.debug.print(`Communicator[${this.resource}]: Connected`);
+        this.launcher.debug.print(`Communicator[${this.resource}]: Connected!`);
 
       });
 
@@ -118,8 +118,8 @@ class Communicator extends EventEmitter {
 
         this.emit('disconnected');
 
-        this.launcher.debug.print(`Communicator[${this.resource}]: Disconnected`);
-        this.launcher.debug.print(`Communicator[${this.resource}]: Trying reconnect...`);
+        this.launcher.debug.print(`Communicator[${this.resource}]: Disconnected.`);
+        this.launcher.debug.print(`Communicator[${this.resource}]: Trying to reconnect...`);
 
         await this.disconnect(true);
         this.stream.connect();
@@ -130,35 +130,35 @@ class Communicator extends EventEmitter {
 
         this.emit('session:ended');
 
-        this.launcher.debug.print(`Communicator[${this.resource}]: Session ended`);
+        this.launcher.debug.print(`Communicator[${this.resource}]: Session ended.`);
 
-        this.launcher.debug.print(`Communicator[${this.resource}]: There will be try of restart connection to obtain new session (at the moment I'm only testing this solution).`);
-        this.launcher.debug.print(`Communicator[${this.resource}]: Trying restart connection to obtain new session...`);
-        
+        this.launcher.debug.print(`Communicator[${this.resource}]: An attempt will be made to restart connection to obtain new session (at the moment I'm only testing this solution).`);
+        this.launcher.debug.print(`Communicator[${this.resource}]: Trying to restart connection to obtain new session...`);
+
         await this.disconnect();
         this.stream.connect();
 
       });
-      
+
       this.stream.once('session:started', async () => {
 
         this.emit('session:started');
 
-        this.launcher.debug.print(`Communicator[${this.resource}]: Session started`);
+        this.launcher.debug.print(`Communicator[${this.resource}]: Session started.`);
 
         await this.refreshFriendsList();
         await this.updateStatus();
 
         resolve();
       });
-      
+
       this.stream.once('session:bound', () => {
 
         this.emit('session:bound');
 
-        this.launcher.debug.print(`Communicator[${this.resource}]: Session bounded`);
+        this.launcher.debug.print(`Communicator[${this.resource}]: Session bound.`);
       });
-      
+
       this.stream.connect();
 
     });
@@ -166,7 +166,7 @@ class Communicator extends EventEmitter {
 
   disconnect(isAlreadyDisconnected, removeAllListeners) {
     return new Promise((resolve) => {
-      
+
       this.stream.off('disconnected');
       this.stream.off('session:end');
       this.stream.off('session:started');
@@ -183,8 +183,8 @@ class Communicator extends EventEmitter {
 
       this.stream.once('disconnected', () => {
 
-        this.launcher.debug.print(`Communicator[${this.resource}]: Disconnected`);
-        
+        this.launcher.debug.print(`Communicator[${this.resource}]: Disconnected.`);
+
         resolve();
 
       });
@@ -196,7 +196,7 @@ class Communicator extends EventEmitter {
   listenFriendsList() {
 
     this.stream.on('iq', (stanza) => {
-      
+
       if (stanza.roster && stanza.type === 'result') {
 
         const friends = stanza.roster.items ? stanza.roster.items.map(friend => ({
@@ -213,15 +213,15 @@ class Communicator extends EventEmitter {
   }
 
   listenFriendStates() {
-    
+
     this.stream.on('presence', (stanza) => {
-      
+
       let state = EUserState.Offline;
 
       if (stanza.type === 'available') {
         state = stanza.show ? EUserState.Online : EUserState.Away;
       }
-      
+
       const status = new Status(this, {
         accountId: stanza.from.local,
         jid: stanza.from,
@@ -231,7 +231,7 @@ class Communicator extends EventEmitter {
 
       this.emit('friend:status', status);
       this.emit(`friend#${status.sender.id}:status`, status);
-      
+
     });
 
   }
@@ -239,7 +239,7 @@ class Communicator extends EventEmitter {
   listenMessages() {
 
     this.stream.on('message', async (stanza) => {
-      
+
       if (stanza.type === 'normal') {
 
         const body = JSON.parse(stanza.body);
@@ -248,20 +248,20 @@ class Communicator extends EventEmitter {
 
           case 'com.epicgames.social.party.notification.v0.PING': {
             // TODO: code refactoring
-            
+
             if (this.app.id !== body.ns) break;
-            
+
             const { data } = await this.app.http.sendGet(
-              `https://party-service-prod.ol.epicgames.com/party/api/v1/${this.app.id}/user/${this.app.launcher.account.id}`,
+              `${ENDPOINT.PARTY}/${this.app.id}/user/${this.app.launcher.account.id}`,
             );
-            
+
             let invitation = data.invites.find(invite => invite.sent_by === body.pinger_id && invite.status === 'SENT');
             if (!invitation) {
               const status = await this.launcher.getFriendStatus(body.pinger_id);
               invitation = this.makeInvitationFromStatus(status);
 
               if (!invitation) {
-                this.launcher.debug.print('Fortnite: Cannot join into the party. Reason: No active invitation');
+                this.launcher.debug.print('Can\'t join party! No active invitation found in client status.');
                 break;
               }
             }
@@ -279,7 +279,7 @@ class Communicator extends EventEmitter {
 
             if (this.app.id === 'Launcher') break;
             if (!this.app.party || this.app.party.id !== body.party_id) break;
-            
+
             const member = this.app.party.findMember(body.account_id);
             if (!member) break;
             this.app.party.removeMember(member);
@@ -362,7 +362,7 @@ class Communicator extends EventEmitter {
 
             if (this.app.id === 'Launcher') break;
             if (!this.app.party || this.app.party.id !== body.party_id) break;
-            
+
             this.app.party.update(body, true);
 
             this.emit('party:updated', this.app.party);
@@ -371,10 +371,10 @@ class Communicator extends EventEmitter {
             break;
 
           case 'com.epicgames.social.party.notification.v0.MEMBER_STATE_UPDATED': {
-            
+
             if (this.app.id === 'Launcher') break;
             if (!this.app.party || this.app.party.id !== body.party_id) break;
-            
+
             const member = this.app.party.findMember(body.account_id);
             if (!member) break;
 
@@ -390,7 +390,7 @@ class Communicator extends EventEmitter {
 
             if (this.app.id === 'Launcher') break;
             if (!this.app.party || this.app.party.id !== body.party_id) break;
-            
+
             let member = this.app.party.findMember(body.account_id);
             if (!member) {
               member = new this.app.PartyMember(this.app.party, body);
@@ -435,7 +435,7 @@ class Communicator extends EventEmitter {
             if (this.app.id !== body.ns) break;
 
             // This event probably is deprecated!
-            this.launcher.debug.print('Fortnite: Debug: INITIAL_INVITE');
+            this.launcher.debug.print('Received "INITIAL_INVITE"');
 
             // const party = await this.app.Party.lookup(this.app, body.party_id);
             // const invitation = new this.app.PartyInvitation(party, {
@@ -484,9 +484,9 @@ class Communicator extends EventEmitter {
           } break;
 
           case 'FRIENDSHIP_REQUEST':
-            
+
             if (body.status === 'ACCEPTED') {
-              
+
               const friend = new Friend(this.launcher, {
                 accountId: body.to,
                 status: body.status,
@@ -518,7 +518,7 @@ class Communicator extends EventEmitter {
         }
 
       } else if (stanza.type === 'chat') {
-        
+
         const friendMessage = new FriendMessage(this, {
           accountId: stanza.from.local,
           status: 'ACCEPTED', // status for Friend
@@ -534,7 +534,7 @@ class Communicator extends EventEmitter {
         this.launcher.debug.print(`Communicator[${this.resource}]: Stanza error!`);
         // eslint-disable-next-line no-console
         console.dir(stanza);
-        
+
       } else {
 
         this.launcher.debug.print(`Communicator[${this.resource}]: Unknown stanza type!`);
@@ -543,7 +543,7 @@ class Communicator extends EventEmitter {
 
       }
 
-      
+
     });
 
   }
@@ -569,9 +569,9 @@ class Communicator extends EventEmitter {
   }
 
   async updateStatus(status) {
-    
+
     if (!status) return this.stream.sendPresence(null);
-    
+
     return this.stream.sendPresence({
       status: JSON.stringify(typeof status === 'object' ? status : { Status: status }),
     });
@@ -579,7 +579,7 @@ class Communicator extends EventEmitter {
 
   /**
    * Sending request for presence.
-   * @param {(JID|string)} to 
+   * @param {(JID|string)} to
    */
   async sendProbe(to) {
 
@@ -589,7 +589,7 @@ class Communicator extends EventEmitter {
     });
 
   }
-  
+
   waitForEvent(event, timeout, filter) {
     return new Promise((resolve, reject) => {
       timeout = typeof timeout === 'number' ? timeout : 5000;

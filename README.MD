@@ -26,16 +26,25 @@ const launcher = new Launcher({
   if(!await launcher.init() || !await launcher.login()) {
     throw new Error('Error while initialize or login process.');
   }
-  
+
   const playerName = 'Kysune';
   const account = await launcher.getProfile(playerName);
   if(!account) throw new Error(`Player ${playerName} not found!`);
-	
+
   console.log(`${account.name}'s id: ${account.id}`);
   // "Kysune's id: 9a1d43b1d826420e9fa393a79b74b2ff"
 
 })();
 ```
+
+# Changelog (Temporary)
+- Updated meta for joining parties (Taken from fortnite.py).
+- Added party endpoint to enums for making it easier to understand where the HTTP posts are getting sent to.
+- Actually learnt the flow of the libraries and how they interact (lol im still learning :) )
+
+# To-Do
+- Party chat
+-
 
 # Documentation
 [https://epicgames-client.kysune.me/](https://epicgames-client.kysune.me/)

@@ -1,3 +1,4 @@
+const ENDPOINT = require('../../resources/Endpoint');
 class Member {
 
   constructor(party, data) {
@@ -27,10 +28,10 @@ class Member {
   async kick() {
     if (this.party.me.id !== this.party.leader.id) throw new Error('You aren\'t the party leader!');
     if (this.party.me.id === this.id) throw new Error('You can\'t kick yourself!');
-    
+
     await this.app.http.send(
       'DELETE',
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${this.app.id}/parties/${this.party.id}/members/${this.id}`,
+      `${ENDPOINT.PARTY}/${this.app.id}/parties/${this.party.id}/members/${this.id}`,
       `${this.app.auth.tokenType} ${this.app.auth.accessToken}`,
     );
 
@@ -43,7 +44,7 @@ class Member {
 
     await this.app.http.send(
       'POST',
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${this.app.id}/parties/${this.party.id}/members/${this.id}/promote`,
+      `${ENDPOINT.PARTY}/${this.app.id}/parties/${this.party.id}/members/${this.id}/promote`,
       `${this.app.auth.tokenType} ${this.app.auth.accessToken}`,
     );
   }
@@ -57,10 +58,10 @@ class Member {
 
     this.isPatching = true;
     const revision = parseInt(this.revision, 10);
-    
+
     await this.app.http.send(
       'PATCH',
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${this.app.id}/parties/${this.party.id}/members/${this.id}/meta`,
+      `${ENDPOINT.PARTY}/${this.app.id}/parties/${this.party.id}/members/${this.id}/meta`,
       `${this.app.auth.tokenType} ${this.app.auth.accessToken}`,
       {
         delete: [],
@@ -70,7 +71,7 @@ class Member {
     );
 
     if (this.revision === revision) this.revision += 1;
-    
+
     if (this.patchQueue.length > 0) {
       const args = this.patchQueue.shift();
       this.patch(...args, true);

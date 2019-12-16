@@ -1,4 +1,5 @@
 const PartyJoinRequest = require('./PartyJoinRequest');
+const ENDPOINT = require('../../resources/Endpoint');
 
 class PartyInvitation {
 
@@ -6,7 +7,7 @@ class PartyInvitation {
 
     this.party = party;
     this.app = this.party.app;
-    
+
     this.meta = data.meta || [];
     this.time = data.time || data.sent_at;
 
@@ -37,12 +38,14 @@ class PartyInvitation {
 
   async reject() {
     await this.app.http.sendPost(
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${this.app.id}/parties/${this.party.id}/invites/${this.app.launcher.account.id}/decline`,
+      `${ENDPOINT.PARTY}/${this.app.id}/parties/${this.party.id}/invites/${this.app.launcher.account.id}/decline`,
       `${this.app.auth.tokenType} ${this.app.auth.accessToken}`,
       {},
     );
   }
 
+  /*
+  Depracated - v11.30
   static async send(party, accountId) {
     // await party.app.http.sendPost(
     //   `https://party-service-prod.ol.epicgames.com/party/api/v1/${party.app.id}/parties/${party.id}/invites/${accountId}`,
@@ -57,11 +60,12 @@ class PartyInvitation {
     // );
     await party.app.http.send(
       'POST',
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${party.app.id}/user/${accountId}/pings/${party.app.launcher.account.id}`,
+      `${ENDPOINT.PARTY}/${party.app.id}/user/${accountId}/pings/${party.app.launcher.account.id}`,
       `${party.app.auth.tokenType} ${party.app.auth.accessToken}`,
       {},
     );
   }
+  */
 
 }
 

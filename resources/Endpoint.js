@@ -6,19 +6,19 @@ module.exports = Object.freeze({
   ORDER_QUICKPURCHASE: 'https://orderprocessor-public-service-ecomprod01.ol.epicgames.com/orderprocessor/api/shared/accounts/{{account_id}}/orders/quickPurchase', // ?country=PL&locale=pl
   PURCHASE: 'https://payment-website-pci.ol.epicgames.com/purchase',
   CATALOG_OFFERS: 'https://catalog-public-service-prod06.ol.epicgames.com/catalog/api/shared/namespace/{{namespace}}/offers', // |/bulk/offers ?id=09176f4ff7564bbbb499bbe20bd6348f&returnItemDetails=false&country=PL&locale=pl
-    
+
   ENTITLEMENTS: 'https://entitlement-public-service-prod08.ol.epicgames.com/entitlement/api/account/{{account_id}}/entitlements', // ?start=0&count=5000
 
   LAUNCHER_STATUS: 'https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/public/assets/info/launcher',
   LAUNCHER_INFO: 'https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/public/assets/Windows/x/EpicGamesLauncher',
-  
+
   LOGIN_FRONTEND: 'https://accounts.launcher-website-prod07.ol.epicgames.com',
 
   OAUTH_TOKEN: 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token',
   OAUTH_EXCHANGE: 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/exchange',
   OAUTH_VERIFY: 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/verify',
   OAUTH_SESSIONS_KILL: 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/sessions/kill',
-    
+
   DOMAINS: 'https://account-public-service-prod03.ol.epicgames.com/account/api/epicdomains/ssodomains',
   WAITING_ROOM: 'https://launcherwaitingroom-public-service-prod06.ol.epicgames.com/waitingroom/api/waitingroom',
   ACCOUNT: 'https://account-public-service-prod03.ol.epicgames.com/account/api/public/account',
@@ -27,6 +27,8 @@ module.exports = Object.freeze({
   FRIENDS: 'https://friends-public-service-prod06.ol.epicgames.com/friends/api/public/friends',
   FRIENDS_BLOCKLIST: 'https://friends-public-service-prod06.ol.epicgames.com/friends/api/public/blocklist',
   FRIENDS_RECENT_PLAYERS: 'https://friends-public-service-prod06.ol.epicgames.com/friends/api/public/list/{{namespace}}/{{account_id}}/recentPlayers',
+
+  PARTY: 'https://party-service-prod.ol.epicgames.com/party/api/v1',
 
   LINKS: 'https://links-public-service-live.ol.epicgames.com/links/api/{{namespace}}/mnemonic/{{mnemonic}}',
   LINKS_AUTHOR: 'https://links-public-service-live.ol.epicgames.com/links/api/{{namespace}}/author/{{accountId}}',

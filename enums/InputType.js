@@ -1,7 +1,7 @@
 module.exports = {
-  
-  MouseAndKeyboard: 0,
-  Controller: 1,
-  Touch: 2,
+
+  KEYBOARDANDMOUSE: 0,
+  GAMEPAD: 1,
+  TOUCH: 2,
 
 };

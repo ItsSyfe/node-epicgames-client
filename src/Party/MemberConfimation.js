@@ -1,4 +1,4 @@
-
+const ENDPOINT = require('../../resources/Endpoint');
 const Member = require('./Member');
 
 class MemberConfimation {
@@ -12,7 +12,7 @@ class MemberConfimation {
 
   confirm() {
     return this.party.app.http.sendPost(
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${this.party.app.id}/parties/${this.party.id}/members/${this.member.id}/confirm`,
+      `${ENDPOINT.PARTY}/${this.party.app.id}/parties/${this.party.id}/members/${this.member.id}/confirm`,
       `${this.party.app.auth.tokenType} ${this.party.app.auth.accessToken}`,
       {},
     );
@@ -20,7 +20,7 @@ class MemberConfimation {
 
   reject() {
     return this.party.app.http.sendPost(
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${this.party.app.id}/parties/${this.party.id}/members/${this.member.id}/reject`,
+      `${ENDPOINT.PARTY}/${this.party.app.id}/parties/${this.party.id}/members/${this.member.id}/reject`,
       `${this.party.app.auth.tokenType} ${this.party.app.auth.accessToken}`,
       {},
     );

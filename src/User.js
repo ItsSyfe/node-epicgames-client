@@ -1,7 +1,7 @@
 class User {
 
   constructor(launcher, data) {
-    
+
     this.launcher = launcher;
 
     if (typeof data !== 'object') {
@@ -26,7 +26,7 @@ class User {
     this.id = data.accountId || data.id;
 
     if (!this.id) {
-      throw new Error('Trying of initialize User without account id. Provided data above.');
+      throw new Error('Attempting to initialize user with not provided Account ID. Provided data above.');
     }
 
     this.jid = data.jid || null;
@@ -60,7 +60,7 @@ class User {
 
     if (this.displayName) return this.displayName; // if we have name, no need to re-fetch
     await this.fetch();
-    
+
     return this.displayName;
   }
 

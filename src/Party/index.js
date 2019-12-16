@@ -1,4 +1,5 @@
 const EPartyPrivacy = require('../../enums/PartyPrivacy');
+const ENDPOINT = require('../../resources/Endpoint');
 
 class Party {
 
@@ -60,7 +61,7 @@ class Party {
   async leave() {
     await this.app.http.send(
       'DELETE',
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${this.app.id}/parties/${this.id}/members/${this.app.launcher.account.id}`,
+      `${ENDPOINT.PARTY}/${this.app.id}/parties/${this.id}/members/${this.app.launcher.account.id}`,
       `${this.app.auth.tokenType} ${this.app.auth.accessToken}`,
       {
         connection: {
@@ -81,8 +82,10 @@ class Party {
     this.app.party = null;
   }
 
-  // join() {
-  // }
+  /*
+  join() {
+  }
+  */
 
   async patch(updated, deleted, isForced) {
 
@@ -93,10 +96,10 @@ class Party {
 
     this.isPatching = true;
     const revision = parseInt(this.revision, 10);
-    
+
     await this.app.http.send(
       'PATCH',
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${this.app.id}/parties/${this.id}`,
+      `${ENDPOINT.PARTY}/${this.app.id}/parties/${this.id}`,
       `${this.app.auth.tokenType} ${this.app.auth.accessToken}`,
       {
         config: {
@@ -131,7 +134,7 @@ class Party {
 
   updatePresence() {
     let partyJoinInfoData;
-    
+
     if (
       this.config.privacy.presencePermission === 'None'
       || (this.config.privacy.presencePermission === 'Leader' && this.leader.id !== this.me.id)
@@ -199,7 +202,7 @@ class Party {
       && p.onlyLeaderFriendsCanJoin === privacy.PrivacySettings.bOnlyLeaderFriendsCanJoin;
     });
     if (privacy) this.config.privacy = privacy;
-    
+
   }
 
   parseConfiguration(config) {
@@ -232,7 +235,7 @@ class Party {
 
   static async lookup(app, id) {
     const { data } = await app.http.sendGet(
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${app.id}/parties/${id}`,
+      `${ENDPOINT.PARTY}/${app.id}/parties/${id}`,
       `${app.auth.tokenType} ${app.auth.accessToken}`,
     );
     return new this(app, data);
@@ -240,20 +243,20 @@ class Party {
 
   static async lookupUser(app, id) {
     const { data } = await app.http.sendGet(
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${app.id}/user/${id}`,
+      `${ENDPOINT.PARTY}/${app.id}/user/${id}`,
       `${app.auth.tokenType} ${app.auth.accessToken}`,
     );
     return data;
   }
 
-  static async create(app, config) { 
+  static async create(app, config) {
     if (!app.communicator) return null;
     config = {
       ...app.config.defaultPartyConfig,
       ...config,
     };
     const { data } = await app.http.sendPost(
-      `https://party-service-prod.ol.epicgames.com/party/api/v1/${app.id}/parties`,
+      `${ENDPOINT.PARTY}/${app.id}/parties`,
       `${app.auth.tokenType} ${app.auth.accessToken}`,
       {
         config: {
